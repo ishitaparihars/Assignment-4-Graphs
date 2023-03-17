@@ -1,0 +1,161 @@
+1) Breadth First Traversal for a Graph
+Breadth First Traversal (BFS) is a graph traversal algorithm that visits all the vertices of a graph in breadth-first order. In other words, it visits all the vertices at the same distance from the starting vertex before moving on to the vertices that are farther away.
+
+Here is how you can perform BFS for a graph:
+
+Choose a starting vertex and mark it as visited.
+Enqueue the starting vertex into a queue.
+While the queue is not empty:
+a. Dequeue a vertex from the queue.
+b. Visit all the neighbors of the dequeued vertex that have not been visited yet.
+c. Mark each visited neighbor as visited and enqueue it into the queue.
+The steps above will ensure that all vertices in the graph are visited in breadth-first order. Here's a Python implementation of BFS for a graph represented using an adjacency list:
+from collections import deque
+
+def bfs(graph, start):
+    visited = set()
+    queue = deque([start])
+    visited.add(start)
+
+    while queue:
+        vertex = queue.popleft()
+        print(vertex, end=' ')
+
+        for neighbor in graph[vertex]:
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.append(neighbor)
+
+
+2) Depth First Traversal for a Graph
+Depth First Traversal (DFT) is another graph traversal algorithm that visits all the vertices of a graph. Unlike BFS, DFT traverses the graph in depth-first order, visiting all the vertices in a path before backtracking to visit other vertices.
+
+Here's how you can perform DFT for a graph:
+
+Choose a starting vertex and mark it as visited.
+Visit all the unvisited neighbors of the starting vertex, choosing one of them as the next starting vertex.
+Repeat step 2 for the next starting vertex, continuing until all vertices have been visited.
+Here's a Python implementation of DFT for a graph represented using an adjacency list:
+def dfs(graph, start, visited=None):
+    if visited is None:
+        visited = set()
+    visited.add(start)
+    print(start, end=' ')
+
+    for neighbor in graph[start]:
+        if neighbor not in visited:
+            dfs(graph, neighbor, visited)
+
+
+3) Count the number of nodes at given level in a tree using BFS
+To count the number of nodes at a given level in a tree using BFS, we need to modify the BFS algorithm to keep track of the level of each vertex as we visit it. We can then count the number of vertices at the desired level.
+
+Here's a Python implementation:
+from collections import deque
+
+def count_nodes_at_level(tree, start, level):
+    visited = set()
+    queue = deque([(start, 0)])
+    visited.add(start)
+
+    count = 0
+    while queue:
+        vertex, vertex_level = queue.popleft()
+        if vertex_level == level:
+            count += 1
+
+        for neighbor in tree[vertex]:
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.append((neighbor, vertex_level + 1))
+
+    return count
+
+4) Count number of trees in a forest
+To count the number of trees in a forest, we can use DFS (Depth First Search) or BFS (Breadth First Search) traversal algorithms. We can start from each unvisited node and traverse all its connected components to mark them visited and count them as one tree. After we have visited all the connected components of the forest, the count of the number of trees will be equal to the number of times we traversed unvisited nodes.
+
+Here's a Python implementation of the algorithm using DFS:
+def count_trees_in_forest_dfs(forest):
+    visited = set()
+    trees = 0
+
+    def dfs(node):
+        visited.add(node)
+        for neighbor in forest[node]:
+            if neighbor not in visited:
+                dfs(neighbor)
+
+    for node in forest:
+        if node not in visited:
+            dfs(node)
+            trees += 1
+
+    return trees
+
+
+
+5) Detect Cycle in a Directed Graph
+To detect a cycle in a directed graph, we can use the DFS algorithm to visit all vertices in the graph and detect if there is a back edge present. A back edge is an edge that connects a vertex to an ancestor that is not its direct parent in the DFS tree. If a back edge is present, then the graph contains a cycle.
+
+Here's a Python implementation of the algorithm:
+def has_cycle(graph):
+    visited = set()
+    path = set()
+
+    def dfs(vertex):
+        visited.add(vertex)
+        path.add(vertex)
+
+        for neighbor in graph[vertex]:
+            if neighbor not in visited:
+                if dfs(neighbor):
+                    return True
+            elif neighbor in path:
+                return True
+
+        path.remove(vertex)
+        return False
+
+    for vertex in graph:
+        if vertex not in visited:
+            if dfs(vertex):
+                return True
+
+    return False
+
+
+Below question is a miscellaneous question
+
+1) **Implement n-Queen’s Problem
+The n-Queens problem is a classic problem in which we need to place n queens on an n x n chessboard so that no two queens are attacking each other (i.e., no two queens are in the same row, column, or diagonal).
+
+Here's a Python implementation of the n-Queens problem using backtracking:
+def solve_n_queens(n):
+    board = [['.' for _ in range(n)] for _ in range(n)]
+    solutions = []
+
+    def backtrack(row):
+        if row == n:
+            solutions.append([''.join(row) for row in board])
+            return
+
+        for col in range(n):
+            if is_valid(row, col):
+                board[row][col] = 'Q'
+                backtrack(row + 1)
+                board[row][col] = '.'
+
+    def is_valid(row, col):
+        for i in range(row):
+            if board[i][col] == 'Q':
+                return False
+
+            row_dist = row - i
+            col_dist = abs(col - col[i])
+            if row_dist == col_dist:
+                return False
+
+        return True
+
+    backtrack(0)
+    return solutions
